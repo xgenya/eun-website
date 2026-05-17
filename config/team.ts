@@ -29,16 +29,20 @@ const team = {
 
   // 核心玩家列表（展示于 About 页面次要位置）
   coreMembers: [
-    { name: "sixteen0522", username: "sixteen0522", color: "#7090e0", desc: "" },
+    { name: "sixteen0522", username: "sixteen0522", color: "#7090e0", desc: "湖南搞机王" },
     { name: "motor10086", username: "motor10086", color: "#e07878", desc: "" },
     { name: "Y_jiaopiYa", username: "Y_jiaopiYa", color: "#c070c0", desc: "" },
     { name: "zongcheng", username: "zongcheng", color: "#70c0c0", desc: "" },
-    { name: "dxh5201314", username: "dxh5201314", color: "#e0a060", desc: "" },
-    { name: "zqrbobo", username: "zqrbobo", color: "#5db85d", desc: "" },
+    { name: "dxh5201314", username: "dxh5201314", color: "#e0a060", desc: "天才少年，被可恶的高中生活所绑架" },
+    { name: "zqrbobo", username: "zqrbobo", color: "#5db85d", desc: "全服最善良(?)的“小猫咪”，人见人爱，乐于帮助新人融入大家庭，有任何困难都可以向他寻求帮助" },
     { name: "Zerostar_0", username: "Zerostar_0", color: "#c0c060", desc: "" },
-    { name: "rhandoms", username: "rhandoms", color: "#c08060", desc: "" },
-    { name: "aimi7", username: "aimi7", color: "#60a0e0", desc: "" },
+    { name: "Rhandoms", username: "Rhandoms", color: "#c08060", desc: "" },
+    { name: "XTDFG", username: "XTDFG", color: "#60a0e0", desc: "全服最舒服之人，和我一起玩很舒服" },
     { name: "Tastemedicine", username: "Tastemedicine", color: "#e07878", desc: "" },
+    { name: "canling_CL", username: "canling_CL", color: "rgba(170, 47, 170, 0.67)", desc: "创造老登" },
+    { name: "OV_E", username: "OV_E", color: "rgba(47, 156, 10, 0.67)", desc: "摸鱼大王，挂机大神" },
+    { name: "Timo0V0", username: "Timo0V0", color: "rgba(15, 62, 109, 1)", desc: "" },
+    { name: "Warm1Sad", username: "Warm1Sad", color: "rgba(13, 174, 23, 1)", desc: "我痞吗" }
   ],
 };
 
