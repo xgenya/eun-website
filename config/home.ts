@@ -11,19 +11,21 @@ const home = {
   startDate: '2026-03-12',
 
   // 服务器列表（用于首页在线状态查询，支持多个，各自独立域名和端口）
-  // id 用于 API 查询标识，name 用于前端展示
+  // id 用于 API 查询标识，name 用于前端展示，eunId 对应 EUN Bot API 的服务器 key
   servers: [
     {
       id: 'survival',
       name: '生存服',
       host: 'eunoia.ink',
       port: 24871,
+      eunId: 'main' as const,
     },
     {
       id: 'creative',
       name: '创造服',
       host: 'eunoia.ink',
       port: 25565,
+      eunId: 'creative' as const,
     },
   ],
 

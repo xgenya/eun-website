@@ -96,12 +96,12 @@ function TopPodium({ players }: { players: PlayerStats[] }) {
           return (
             <div key={p.name} className={`${styles.podiumPlayer} ${styles[`podiumRank${actualRank + 1}`]}`}>
               <div className={styles.podiumMedalLarge}>{medals[i]}</div>
-              <div className={styles.skinWrapper}>
-                <SkinModel username={p.name} size={120} />
-              </div>
               <div className={styles.podiumInfo}>
                 <span className={styles.podiumPlayerName}>{p.name}</span>
                 <span className={styles.podiumPlayerTime}>{formatPlaytime(p.playtime)}</span>
+              </div>
+              <div className={styles.skinWrapper}>
+                <SkinModel username={p.name} size={120} />
               </div>
               <div 
                 className={styles.podiumBase} 
@@ -198,8 +198,78 @@ function FullLeaderboard({ board, players }: { board: LeaderboardType; players: 
 
 export default function LeaderboardPage() {
   const [activeBoard, setActiveBoard] = useState<string>(LEADERBOARDS[0].id)
-  
+  // 榜单按 order 分别缓存到客户端；playtime 用于首页 podium
+  const [byOrder, setByOrder] = useState<Record<string, PlayerStats[]>>({})
+  const [loading, setLoading] = useState(true)
+  const [source, setSource] = useState<'api' | 'loading' | 'fallback'>('loading')
+
   const currentBoard = LEADERBOARDS.find(b => b.id === activeBoard) || LEADERBOARDS[0]
+
+  // 首次挂载：并发拉 playtime（podium 用）+ 当前 tab 对应 order
+  useEffect(() => {
+    let cancelled = false
+    setLoading(true)
+
+    async function fetchOrder(order: string): Promise<PlayerStats[] | null> {
+      try {
+        const r = await fetch(`/api/eun/leaderboard?limit=50&order=${order}`)
+        const d = await r.json()
+        if (d?.ok && Array.isArray(d.players) && d.players.length > 0) {
+          return d.players as PlayerStats[]
+        }
+      } catch {
+        /* ignore */
+      }
+      return null
+    }
+
+    const initialOrders = new Set(['playtime', currentBoard.field])
+    Promise.all(
+      Array.from(initialOrders).map(async (o) => [o, await fetchOrder(o)] as const),
+    ).then((entries) => {
+      if (cancelled) return
+      const next: Record<string, PlayerStats[]> = {}
+      let anySuccess = false
+      for (const [o, list] of entries) {
+        if (list) {
+          next[o] = list
+          anySuccess = true
+        }
+      }
+      setByOrder(next)
+      setLoading(false)
+      setSource(anySuccess ? 'api' : 'fallback')
+    })
+
+    return () => {
+      cancelled = true
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // 切 tab 时若该 order 未缓存则按需拉
+  useEffect(() => {
+    const order = currentBoard.field
+    if (byOrder[order]) return
+    let cancelled = false
+    fetch(`/api/eun/leaderboard?limit=50&order=${order}`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (cancelled) return
+        if (d?.ok && Array.isArray(d.players) && d.players.length > 0) {
+          setByOrder((prev) => ({ ...prev, [order]: d.players as PlayerStats[] }))
+        }
+      })
+      .catch(() => {
+        /* ignore */
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [currentBoard.field, byOrder])
+
+  const podiumPlayers = byOrder['playtime'] ?? (source === 'fallback' ? PLAYERS : [])
+  const activePlayers = byOrder[currentBoard.field] ?? (source === 'fallback' ? PLAYERS : [])
 
   return (
     <div className={styles.container}>
@@ -232,7 +302,7 @@ export default function LeaderboardPage() {
 
         {/* Hero Podium - Playtime */}
         <section className={styles.heroSection}>
-          <TopPodium players={PLAYERS} />
+          <TopPodium players={podiumPlayers} />
         </section>
 
         {/* Board Selector */}
@@ -241,7 +311,7 @@ export default function LeaderboardPage() {
             <LeaderboardCard
               key={board.id}
               board={board}
-              players={PLAYERS}
+              players={byOrder[board.field] ?? podiumPlayers}
               isActive={activeBoard === board.id}
               onClick={() => setActiveBoard(board.id)}
             />
@@ -250,13 +320,17 @@ export default function LeaderboardPage() {
 
         {/* Full Leaderboard */}
         <section className={styles.section}>
-          <FullLeaderboard board={currentBoard} players={PLAYERS} />
+          <FullLeaderboard board={currentBoard} players={activePlayers} />
         </section>
 
         {/* Data Notice */}
         <section className={styles.noticeSection}>
           <p className={styles.noticeText}>
-            数据每日自动更新 · 仅供娱乐参考
+            {loading
+              ? '数据加载中…'
+              : source === 'api'
+                ? '数据实时来自 EUN Bot API · 仅供娱乐参考'
+                : '当前展示为示例占位数据 · 仅供娱乐参考'}
           </p>
         </section>
       </main>

@@ -7,4 +7,5 @@ const withNextra = nextra({
 
 export default withNextra({
   output: 'standalone',
+  allowedDevOrigins: ['192.168.31.48', '*.local'],
 })

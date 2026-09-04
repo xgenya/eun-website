@@ -178,7 +178,7 @@
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  gap: 24px;
+  gap: 32px;
 }
 
 .podiumPlayer {
@@ -207,7 +207,10 @@
   position: relative;
   z-index: 3;
   text-align: center;
-  margin-bottom: -10px;
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .podiumPlayerName {

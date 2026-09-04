@@ -9,7 +9,7 @@ function getBase(): string {
   return API_BASE
 }
 
-export type ServerId = 'main' | 'creative' | 'test' | 'mirror'
+export type ServerId = 'main' | 'creative' | 'test' | 'mirror' | 'vc'
 export type SwitchAction = 'on' | 'off'
 export type UnifiedAction = 'start' | 'stop' | 'restart' | 'cancel'
 
@@ -63,12 +63,18 @@ async function call<T = unknown>(path: string, body?: unknown): Promise<EunRespo
 }
 
 // ---- 只读查询 ----
+export const getHealth = () => call('/api/health')
+export const getServers = () => call('/api/servers')
 export const getStatus = () => call('/api/status')
 export const getOnline = (server: ServerId = 'main') =>
   call(`/api/online?server=${encodeURIComponent(server)}`)
 export const getPlayerInfo = (name: string) =>
   call(`/api/player-info?name=${encodeURIComponent(name)}`)
 export const getSparkState = () => call('/api/spark/state')
+
+export type StatsOrder = 'playtime' | 'mined' | 'elytra' | 'deaths' | 'kills'
+export const getStatsTop = (limit = 50, order: StatsOrder = 'playtime') =>
+  call(`/api/stats/top?limit=${limit}&order=${order}`)
 
 // ---- 管理动作 ----
 export const restartServer = (server: ServerId, seconds = 60) =>

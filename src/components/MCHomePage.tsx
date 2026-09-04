@@ -32,7 +32,7 @@ export default function MCHomePage() {
   const daysRunning = Math.floor((today.getTime() - SERVER_START_DATE.getTime()) / (1000 * 60 * 60 * 24))
 
   useEffect(() => {
-    fetch('/api/server-status')
+    fetch('/api/eun/status')
       .then((r) => r.json())
       .then((d) => {
         setSurvival(d.survival ?? { online: false, players: 0, maxPlayers: 0 })
@@ -102,13 +102,6 @@ export default function MCHomePage() {
             </span>
             <span className={styles.statLabel}>Creative</span>
             <span className={styles.statLabelSub}>创造服</span>
-          </div>
-          <div className={styles.statItem}>
-            <span className={styles.statValue}>
-              <AnimatedNumber value={2} />
-            </span>
-            <span className={styles.statLabel}>Season</span>
-            <span className={styles.statLabelSub}>周目</span>
           </div>
           <div className={styles.statItem}>
             <span className={styles.statValue}>
