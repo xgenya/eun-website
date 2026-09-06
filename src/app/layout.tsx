@@ -5,6 +5,7 @@ import 'nextra-theme-docs/style.css'
 
 export const metadata = {
   title: 'EUN Server',
+  icons: [],
 }
 
 export default async function RootLayout({
